@@ -1,4 +1,4 @@
-name: Daily Expense API NestJS CI
+name: NestJS CI
 
 on:
   push:
@@ -6,31 +6,30 @@ on:
       - develop
       - main
 
-    pull_request:
-      branches:
-        - develop
-        - main
+  pull_request:
+    branches:
+      - develop
+      - main
 
-  jobs:
-    build:
-      runs-on: ubuntu-latest
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-      strategy:
-        matrix:
-          node-version: [24]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      steps:
-        - uses: action/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
 
-        - uses: actions/setup-node@v4
-          with:
-            node-version: ${{ matrix.node-version }}
-            cache: npm
+      - name: Install dependencies
+        run: npm ci
 
-        - run: npm ci
+      - name: Run tests
+        run: npm test
 
-        - run: npm run init
-
-        - run: npm test
-
-        - run: npm run build
+      - name: Build application
+        run: npm run build
